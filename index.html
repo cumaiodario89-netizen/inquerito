@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IA Academy | Inquérito</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020b2a;--bg2:#05175a;--blue:#1e7bff;--cyan:#2fd0ff;--silver:#dfe7f3;--mut:#8fa6d6;--line:rgba(120,170,255,.22)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:'Sora',system-ui,sans-serif;color:#fff;background:radial-gradient(1100px 700px at 15% -10%,#0a3aa8 0,transparent 60%),radial-gradient(900px 600px at 100% 110%,#3b1fb5 0,transparent 55%),var(--bg);overflow-x:hidden}
+#net{position:fixed;inset:0;z-index:0;opacity:.55;pointer-events:none}
+.app{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 18px 32px}
+.top{width:100%;max-width:720px;display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.top img{width:46px;height:46px;border-radius:14px;box-shadow:0 0 22px rgba(47,208,255,.45)}
+.bar{flex:1;height:8px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan),#fff);box-shadow:0 0 14px var(--cyan);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.pct{font-size:13px;color:var(--silver);min-width:38px;text-align:right}
+.stage{width:100%;max-width:720px;flex:1;display:flex;align-items:center}
+.card{width:100%;padding:34px 30px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(160deg,rgba(20,60,160,.35),rgba(3,12,50,.7));backdrop-filter:blur(14px);box-shadow:0 20px 70px rgba(0,20,120,.5),inset 0 1px 0 rgba(255,255,255,.12)}
+.card.in{animation:in .45s cubic-bezier(.2,.8,.2,1)}
+.card.back{animation:inb .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes inb{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+.chap{display:inline-block;font-size:13px;color:var(--cyan);border:1px solid var(--line);border-radius:99px;padding:6px 14px;margin-bottom:20px;background:rgba(47,208,255,.08)}
+h1,h2{font-weight:800;line-height:1.12;letter-spacing:-.02em}
+h1{font-size:clamp(34px,7vw,56px);background:linear-gradient(180deg,#fff,#a9c8ff 60%,#dfe7f3);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(24px,4.6vw,34px);margin-bottom:8px}
+.hint{color:var(--mut);font-size:15px;line-height:1.5;margin-bottom:24px;max-width:56ch}
+.lead{color:var(--silver);font-size:17px;line-height:1.6;margin:18px 0 26px;max-width:46ch}
+.meta{display:flex;gap:22px;flex-wrap:wrap;color:var(--mut);font-size:14px;margin-top:22px}
+input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;font:inherit;font-size:20px;color:#fff;background:rgba(2,10,45,.7);border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;outline:none;transition:.2s}
+textarea{min-height:110px;resize:vertical;font-size:17px}
+input:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(47,208,255,.18),0 0 26px rgba(47,208,255,.25)}
+::placeholder{color:#5f78b0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opts.one{grid-template-columns:1fr}
+.opt{font:inherit;font-size:16px;text-align:left;color:var(--silver);background:rgba(2,10,45,.55);border:1.5px solid var(--line);border-radius:16px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:.18s}
+.opt b{flex:none;width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--mut)}
+.opt:hover{border-color:var(--blue);transform:translateY(-2px);background:rgba(30,123,255,.14)}
+.opt.sel{border-color:var(--cyan);background:linear-gradient(135deg,rgba(30,123,255,.55),rgba(47,208,255,.25));color:#fff;box-shadow:0 0 24px rgba(47,208,255,.35)}
+.opt.sel b{background:var(--cyan);border-color:var(--cyan);color:#012}
+.nav{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;font-size:17px;color:#fff;border:0;border-radius:16px;padding:16px 30px;cursor:pointer;background:linear-gradient(135deg,var(--blue),#0a4fe0 55%,#3d6bff);box-shadow:0 8px 30px rgba(30,123,255,.5),inset 0 1px 0 rgba(255,255,255,.35);transition:.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(47,208,255,.55)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.link{font:inherit;font-size:15px;color:var(--mut);background:none;border:0;cursor:pointer;padding:10px 6px}
+.link:hover{color:#fff}
+.kb{color:#5f78b0;font-size:13px}
+.err{color:#ff8fa3;font-size:14px;margin-top:12px;min-height:20px}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.hp{position:absolute;left:-9999px;opacity:0}
+.done{text-align:center}
+.done img{width:130px;border-radius:30px;box-shadow:0 0 60px rgba(47,208,255,.6);margin-bottom:20px;animation:pop .7s cubic-bezier(.2,1.4,.3,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.done .lead{margin-inline:auto}
+.done .nav{justify-content:center}
+.warn{margin-top:14px;font-size:13px;color:#ffd27a}
+canvas#fx{position:fixed;inset:0;z-index:5;pointer-events:none}
+@media(max-width:560px){.card{padding:26px 20px}.opts{grid-template-columns:1fr}.btn{width:100%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+</style>
+</head>
+<body>
+<canvas id="net"></canvas><canvas id="fx"></canvas>
+<div class="app">
+  <div class="top"><img src="assets/logo.png" alt="IA Academy"><div class="bar"><i id="fill"></i></div><span class="pct" id="pct">0%</span></div>
+  <div class="stage"><div class="card in" id="card"></div></div>
+</div>
+<input class="hp" id="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script>
+/* ====== CONFIGURAÇÃO: cole aqui os dados do seu projeto Supabase ====== */
+const SUPABASE_URL = "https://ouoemxeqaziczzfhxhcd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_309UJxEEw_yy_I4EQMvopw_aGqwKjJz";
+const WHATSAPP_GRUPO = ""; // opcional: link do convite do grupo
+/* ======================================================================= */
+
+const CH = ["Sobre você","Uso da IA","Renda extra"];
+const PROV = ["Maputo Cidade","Maputo Província","Gaza","Inhambane","Sofala","Manica","Tete","Zambézia","Nampula","Cabo Delgado","Niassa","Fora de Moçambique"];
+const Q = [
+ {k:"nome",s:0,t:"Como é que você se chama?",h:"Nome completo, para o seu certificado e acessos futuros.",type:"text",ph:"O seu nome",req:1},
+ {k:"email",s:0,t:"Qual é o seu melhor e-mail?",h:"É por aqui que enviamos materiais e lançamentos.",type:"email",ph:"nome@email.com",req:1},
+ {k:"whatsapp",s:0,t:"E o seu número de WhatsApp?",h:"Com o indicativo. Ex: +258 84 000 0000",type:"tel",ph:"+258 ",req:1},
+ {k:"pais",s:0,t:"Em que país você vive?",type:"text",ph:"Moçambique",def:"Moçambique",req:1},
+ {k:"provincia",s:0,t:"Em que província?",h:"Assim sabemos onde a comunidade está a crescer.",type:"choice",opts:PROV,req:1,cols:2},
+ {k:"cidade",s:0,t:"Cidade ou distrito?",type:"text",ph:"Ex: Matola",req:1},
+ {k:"idade",s:0,t:"Qual é a sua idade?",h:"Opcional.",type:"number",ph:"Ex: 24"},
+ {k:"situacao",s:0,t:"Qual é a sua situação atual?",type:"choice",opts:["Estudante","Trabalho por conta de outrem","Freelancer","Empreendedor","Desempregado","Outro"],req:1},
+ {k:"negocio",s:0,t:"Tem negócio ou projeto?",h:"Se sim, diga a área. Opcional.",type:"text",ph:"Ex: loja de roupa, salão, agência..."},
+ {k:"uso_ia",s:1,t:"Para que quer usar a IA?",type:"choice",opts:["Escola ou faculdade","O meu negócio","Trabalhar como freelancer","Criar conteúdo e design","Ganhar dinheiro online","Outro"],req:1},
+ {k:"nivel",s:1,t:"Qual é o seu nível com a IA hoje?",type:"choice",opts:["Nunca usei","Uso o básico","Uso com frequência","Já trabalho com IA"],req:1},
+ {k:"aprender",s:1,t:"O que mais quer aprender?",type:"choice",opts:["Design com IA","Vídeo com IA","Automação","Vendas e marketing com IA","Outro"],req:1},
+ {k:"dificuldade",s:1,t:"Qual é a sua maior dificuldade com a IA?",h:"Diga com as suas palavras. Opcional.",type:"area",ph:"Escreva aqui..."},
+ {k:"renda_extra",s:2,t:"Quer gerar renda extra com a IA?",type:"choice",opts:["Sim, é o meu principal objetivo","Sim, como complemento","Ainda não sei","Não, é só para uso pessoal ou estudo"],req:1,one:1},
+ {k:"ja_ganha",s:2,t:"Já ganha dinheiro com IA ou serviços digitais?",type:"choice",opts:["Não, ainda não","Já fiz alguns trabalhos","Sim, ganho regularmente"],req:1,one:1},
+ {k:"como_ganhar",s:2,t:"Como gostaria de ganhar dinheiro com a IA?",type:"choice",opts:["Vendendo serviços (design, vídeo, textos)","Vendendo produtos digitais","Melhorando o meu negócio","Criando conteúdo para redes","Serviços de automação","Ainda não sei"],req:1},
+ {k:"meta_mensal",s:2,t:"Quanto gostaria de ganhar por mês com IA?",h:"Indique o valor e a moeda.",type:"text",ph:"Ex: 20.000 MZN",req:1},
+ {k:"tempo_dia",s:2,t:"Quanto tempo por dia pode dedicar?",type:"choice",opts:["Menos de 1 hora","1 a 2 horas","3 a 4 horas","Mais de 4 horas"],req:1},
+ {k:"investimento",s:2,t:"Quanto está disposto a investir para começar?",type:"choice",opts:["Nada, só conteúdo grátis","Um valor baixo","Um valor médio","Um valor mais alto, se o método for bom"],req:1,one:1},
+ {k:"renda_atual",s:2,t:"Qual é a sua renda mensal atual?",h:"Opcional. Só serve para ajustar preços e métodos.",type:"choice",opts:["Prefiro não dizer","Menos de 10 mil MZN","10 a 30 mil MZN","30 a 60 mil MZN","Mais de 60 mil MZN"]},
+ {k:"equipamento",s:2,t:"O que tem para trabalhar?",type:"choice",opts:["Computador e internet","Só telemóvel e internet","Internet instável"],req:1,one:1},
+ {k:"impedimento",s:2,t:"O que mais o impede de ganhar com IA hoje?",type:"choice",opts:["Não sei por onde começar","Falta de clientes","Falta de conhecimento técnico","Falta de tempo","Falta de equipamento","Outro"],req:1},
+ {k:"consentimento",s:2,t:"Última coisa.",h:"Os seus dados serão usados apenas para comunicações da IA Academy. Nunca os partilhamos.",type:"choice",opts:["Aceito e quero entrar na lista de prioridade"],req:1,one:1,last:1}
+];
+
+const $=id=>document.getElementById(id), card=$("card");
+const A={}; let i=-1; // -1 = boas-vindas
+Q.forEach(q=>{if(q.def)A[q.k]=q.def});
+const sb=(window.supabase&&!SUPABASE_URL.includes("COLE"))?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+
+function progress(){const p=i<0?0:Math.round(i/Q.length*100);$("fill").style.width=p+"%";$("pct").textContent=p+"%"}
+function render(back){
+  progress(); card.className="card "+(back?"back":"in"); void card.offsetWidth;
+  if(i<0){card.innerHTML=`<span class="chap">Inquérito de membros</span><h1>Vamos conhecer<br>você.</h1><p class="lead">Responda em 2 minutos e ganhe prioridade nos próximos métodos e lançamentos da IA Academy.</p><div class="nav"><button class="btn" id="go">Começar agora</button></div><div class="meta"><span>${Q.length} perguntas rápidas</span><span>Sem respostas certas</span><span>Dados protegidos</span></div>`;$("go").onclick=()=>{i=0;render()};return}
+  const q=Q[i], first=i===0||Q[i-1].s!==q.s;
+  let inp="";
+  if(q.type==="choice"){inp=`<div class="opts ${q.one?'one':''}">${q.opts.map((o,n)=>`<button class="opt ${A[q.k]===o?'sel':''}" data-v="${o}"><b>${String.fromCharCode(65+n)}</b>${o}</button>`).join("")}</div>`}
+  else if(q.type==="area"){inp=`<textarea id="in" placeholder="${q.ph||''}">${A[q.k]||''}</textarea>`}
+  else inp=`<input id="in" type="${q.type}" placeholder="${q.ph||''}" value="${A[q.k]||''}" ${q.type==='number'?'min="10" max="99"':''} autocomplete="off">`;
+  const showNext=q.type!=="choice"||q.last;
+  card.innerHTML=`<span class="chap">${CH[q.s]}</span><h2>${q.t}</h2><p class="hint">${q.h||""}</p>${inp}<p class="err" id="err"></p>
+  <div class="nav">${showNext?`<button class="btn" id="nx">${q.last?"Enviar respostas":"Continuar"}</button>`:""}${i>0?`<button class="link" id="bk">Voltar</button>`:""}${!q.req&&q.type!=="choice"||!q.req?`<button class="link" id="sk">Saltar</button>`:""}${q.type==="text"||q.type==="email"||q.type==="tel"||q.type==="number"?`<span class="kb">ou carregue Enter</span>`:""}</div>`;
+  const el=$("in"); if(el&&window.innerWidth>560)el.focus();
+  card.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{A[q.k]=b.dataset.v;card.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel",x===b));if(!q.last)setTimeout(next,260)});
+  if($("nx"))$("nx").onclick=next; if($("bk"))$("bk").onclick=prev; if($("sk"))$("sk").onclick=()=>{delete A[q.k];i++;go()};
+  if(el&&q.type!=="area")el.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();next()}};
+}
+function go(){i<Q.length?render():finish()}
+function fail(m){$("err").textContent=m;card.classList.remove("shake");void card.offsetWidth;card.classList.add("shake")}
+function next(){
+  const q=Q[i], el=$("in");
+  if(el)A[q.k]=el.value.trim();
+  const v=A[q.k];
+  if(q.req&&!v)return fail("Preencha este campo para continuar.");
+  if(q.k==="email"&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))return fail("Esse e-mail não parece válido. Verifique e tente de novo.");
+  if(q.k==="whatsapp"&&v.replace(/\D/g,"").length<9)return fail("Indique o número completo, com o indicativo.");
+  if(q.k==="idade"&&v&&(v<10||v>99))return fail("Indique uma idade entre 10 e 99.");
+  if(q.last)return submit();
+  i++;render();
+}
+function prev(){const el=$("in");if(el)A[Q[i].k]=el.value.trim();i--;i<0?render(1):render(1)}
+
+async function submit(){
+  const b=$("nx");b.disabled=true;b.textContent="A enviar...";
+  if($("hp").value){return finish()} // robô
+  const row={...A,consentimento:true,idade:A.idade?parseInt(A.idade):null};
+  if(!sb){console.warn("Supabase não configurado. Dados (modo demo):",row);window._demo=true;return finish()}
+  const {error}=await sb.from("respostas").insert(row);
+  if(error){console.error(error);b.disabled=false;b.textContent="Enviar respostas";return fail("Não foi possível enviar agora. Verifique a internet e tente de novo.")}
+  finish();
+}
+function finish(){
+  i=Q.length;$("fill").style.width="100%";$("pct").textContent="100%";card.className="card in done";
+  const nome=(A.nome||"").split(" ")[0];
+  const txt=encodeURIComponent("Estou na IA Academy, a comunidade para aprender a usar a IA na prática. Responda ao inquérito e entre também: "+location.href.split("#")[0]);
+  card.innerHTML=`<img src="assets/logo.png" alt=""><h1>Está dentro${nome?", "+nome:""}.</h1><p class="lead">Respostas recebidas. Quando chegarmos a 100 membros, as novidades começam a sair. Quanto mais rápido chegarmos lá, mais cedo começamos.</p><div class="nav"><a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">Convidar amigos no WhatsApp</a>${WHATSAPP_GRUPO?`<a class="link" target="_blank" rel="noopener" href="${WHATSAPP_GRUPO}">Abrir o grupo</a>`:""}</div>${window._demo?'<p class="warn">Modo demonstração: o Supabase ainda não está configurado, as respostas não foram guardadas.</p>':""}`;
+  confetti();
+}
+
+/* fundo em rede neural */
+(function(){const c=$("net"),x=c.getContext("2d");let w,h,P=[];
+ function rs(){w=c.width=innerWidth;h=c.height=innerHeight;P=Array.from({length:Math.min(60,w/22|0)},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3}))}
+ rs();addEventListener("resize",rs);
+ const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+ (function t(){x.clearRect(0,0,w,h);P.forEach(p=>{if(!still){p.x+=p.vx;p.y+=p.vy}if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;x.fillStyle="#2fd0ff";x.fillRect(p.x,p.y,2.2,2.2)});
+ for(let a=0;a<P.length;a++)for(let b=a+1;b<P.length;b++){const d=Math.hypot(P[a].x-P[b].x,P[a].y-P[b].y);if(d<140){x.strokeStyle=`rgba(47,160,255,${.28*(1-d/140)})`;x.beginPath();x.moveTo(P[a].x,P[a].y);x.lineTo(P[b].x,P[b].y);x.stroke()}}
+ if(!still)requestAnimationFrame(t)})()})();
+
+/* confetti azul e prata */
+function confetti(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;const c=$("fx"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+ const cols=["#1e7bff","#2fd0ff","#dfe7f3","#ffffff","#5b7bff"];
+ let p=Array.from({length:140},()=>({x:innerWidth/2,y:innerHeight/2,vx:(Math.random()-.5)*16,vy:Math.random()*-15-3,s:Math.random()*7+3,c:cols[Math.random()*5|0],r:Math.random()*6}));
+ (function t(){x.clearRect(0,0,c.width,c.height);p.forEach(q=>{q.vy+=.35;q.x+=q.vx;q.y+=q.vy;q.r+=.2;x.save();x.translate(q.x,q.y);x.rotate(q.r);x.fillStyle=q.c;x.fillRect(-q.s/2,-q.s/2,q.s,q.s*.6);x.restore()});p=p.filter(q=>q.y<c.height+20);if(p.length)requestAnimationFrame(t);else x.clearRect(0,0,c.width,c.height)})()}
+
+render();
+</script>
+</body>
+</html>
